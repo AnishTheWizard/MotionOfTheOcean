@@ -1,0 +1,14 @@
+# How an Example Path Would Be Formatted
+config {
+    name: example
+    robot_params: [0, 0, 0, 0]
+    subsystem_requirements: [abcd, efgh]
+    column_ownerships: [queuer, shooter]
+    etc..
+}
+
+execute {
+    0, 0, 0,
+    1, 1, 1,
+    ....
+}
