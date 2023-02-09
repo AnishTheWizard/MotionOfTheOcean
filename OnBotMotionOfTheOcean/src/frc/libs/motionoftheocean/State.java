@@ -1,6 +1,8 @@
 package frc.libs.motionoftheocean;
 
 import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 public class State {
 
@@ -8,24 +10,33 @@ public class State {
     double y;
     double theta;
 
-    Object[] otherStates;
+    double v;
+    double a;
 
-    public State(double x, double y, double theta, Object[] otherStates) {
-        this.x = x;
-        this.y = y;
-        this.theta = theta;
-        this.otherStates = otherStates;
+    ArrayList<Double> dynamicStates;
+    ArrayList<Boolean> binaryStates;
+
+    ArrayList<BooleanSupplier> parallelConditions;
+    ArrayList<BooleanSupplier> raceConditions;
+
+    public State(double[] chassisMotion, ArrayList<Double> dynamicStates, ArrayList<Boolean> binaryStates, ArrayList<BooleanSupplier> parallelConditions, ArrayList<BooleanSupplier> raceConditions) {
+        x = chassisMotion[0];
+        y = chassisMotion[1];
+        theta = chassisMotion[2];
+
+        v = chassisMotion[3];
+        a = chassisMotion[4];
+
+        this.dynamicStates = dynamicStates;
+        this.binaryStates = binaryStates;
+
+        this.parallelConditions = parallelConditions;
+        this.raceConditions = raceConditions;
     }
 
-    public State(double[] pose, Object[] otherStates) {
-        this.x = pose[0];
-        this.y = pose[1];
-        this.theta = pose[2];
-        this.otherStates = otherStates;
-    }
-
-    public State(double[] pose, ArrayList<Object> otherStates) {
-
+    @Override
+    public String toString(){
+        return "deez";
     }
 
 

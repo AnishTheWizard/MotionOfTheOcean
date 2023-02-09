@@ -1,6 +1,10 @@
 package frc.libs.motionoftheocean;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -8,25 +12,14 @@ import java.util.function.Supplier;
 public class Main {
 
     static int i = 0;
+    static long last = System.currentTimeMillis();
 
     public static void main(String[] args) throws InterruptedException {
-        MotionOfTheOcean.addPositionFunctions(Main::getPose, Main::toPose);
-        MotionOfTheOcean.Recorder.configureRecording(100, new String[]{"drivetrain"}, "testRec", MotionOfTheOcean.Recorder.RecordingType.WITH_POSE);
-        MotionOfTheOcean.Recorder.startRecorder();
-        while(i < 3) {
 
-        }
-        System.out.println("recording finished");
-        MotionOfTheOcean.Recorder.stopRecorder();
-        MotionOfTheOcean.Recorder.exportRecording();
     }
 
-    public static double[] getPose() {
-        i++;
-        return new double[] {i, i*2};
-    }
-
-    public static void toPose(double[] vec) {
-        System.out.println(vec[0] + "" + vec[1]);
+    public static void print() {
+        System.out.println("deez nuts are huge: " + (System.currentTimeMillis() - last));
+        last = System.currentTimeMillis();
     }
 }

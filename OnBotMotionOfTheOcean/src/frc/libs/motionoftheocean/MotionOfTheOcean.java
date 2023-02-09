@@ -1,10 +1,8 @@
 package frc.libs.motionoftheocean;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -105,7 +103,7 @@ public class MotionOfTheOcean {
                 otherStates[i] = recorders.get(subsystemOrder[i]).get();
             }
 
-            recording.add(new State(pose, otherStates));
+//            recording.add(new State(pose, otherStates));
             System.out.println("updating recording");
         }
     }
