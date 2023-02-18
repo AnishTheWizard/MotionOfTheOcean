@@ -1,110 +1,151 @@
 package frc.libs.motionoftheocean;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class MotionOfTheOcean {
 
     //Subsystem commands
-    private static HashMap<String, Supplier<Object>> recorders;
-    private static HashMap<String, Consumer<Object>> runners;
+    private static final HashMap<String, Supplier<Double>> dynamicStateAccessors = new HashMap<>();
+    private static final HashMap<String, Supplier<Boolean>> binaryStateAccessors = new HashMap<>();
+//    private static final ArrayList<Accessor<Double>> dynamicStateAccessors = new ArrayList<>();
+//    private static final ArrayList<Accessor<Boolean>> binaryStateAccessors = new ArrayList<>();
+
+    private static final HashMap<String, Consumer<Double>> dynamicExecutors = new HashMap<>();
+    private static final HashMap<String, Runnable> binaryExecutors = new HashMap<>();
+
+//    private static final ArrayList<Mutator<Double>> dynamicExecutors = new ArrayList<>();
+//    private static final ArrayList<Mutator<Boolean>> binaryExecutors = new ArrayList<>();
+
+    private static final HashMap<String, Supplier<Boolean>> parallelConditions = new HashMap<>();
+//    private static final ArrayList<Accessor<Boolean>> parallelConditions = new ArrayList<>();
+
+    private static ArrayList<String> subsystemOrder = new ArrayList<String>();
 
     //drivetrain commands
-    private static Supplier<double[]> getPose;
-    private static Consumer<double[]> toPose;
+    private static Supplier<double[]> getChassisState = null;
+    private static Consumer<double[]> toChassisState = null;
 
     //config params
     private static final String[] PATH_FILES = FileManager.locateAllPaths();
     private static String selectedPath = "recording.csv";
 
     public static void addPositionFunctions(Supplier<double[]> getPose, Consumer<double[]> toPose) {
-        MotionOfTheOcean.getPose = getPose;
-        MotionOfTheOcean.toPose = toPose;
+        MotionOfTheOcean.getChassisState = getPose;
+        MotionOfTheOcean.toChassisState = toPose;
     }
 
-    public static void addRecorder(String name, Supplier<Object> r) {
-        recorders.put(name, r);
-    }
-    public static void addRunner(String name, Consumer<Object> r) {
-        runners.put(name, r);
+    public static void addDynamicState(String name, Supplier<Double> state, Consumer<Double> executor) {
+        dynamicStateAccessors.put(name, state);
+        dynamicExecutors.put(name, executor);
+
     }
 
-    public static void selectRecording(String filename) throws Exceptions.PathFileDoesNotExit {
+    public static void addBinaryState(String name, Supplier<Boolean> state, Runnable runnable) {
+        binaryStateAccessors.put(name, state);
+        binaryExecutors.put(name, runnable);
+    }
+
+    public static void addParallelCondition(String name, Supplier<Boolean> condition) {
+        parallelConditions.put(name, condition);
+    }
+
+    public static void addSubsystemOrder(String subsystemName) {
+        subsystemOrder.add(subsystemName);
+    }
+
+    public static void setSelectedPath(String filename) {
+        selectedPath = filename;
+    }
+
+    public static void selectRecording(String filename) throws Exceptions.PathFileDoesNotExist {
         if(SharkUtility.findIn(PATH_FILES, filename)) {
             selectedPath = filename;
         }
         else {
-            throw new Exceptions.PathFileDoesNotExit("File " + filename + " does not exist in memory");
+            throw new Exceptions.PathFileDoesNotExist("File " + filename + " does not exist in memory");
         }
+    }
+
+    public static boolean isParentReady() {
+        return (getChassisState == null || toChassisState == null);
     }
 
 
     public static class Recorder {
 
-        private static String[] subsystemOrder;
-        private static Object[] otherStates;
 
-        private static String recordingName;
+        private static ArrayList<State> recording = new ArrayList<>();
 
-        private static ArrayList<State> recording;
-
-        private static ScheduledExecutorService executorService;
+        private static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
         public enum RecordingType {
-            WITH_POSE,
+            TOTAL_SYSTEM,
             SUBSYSTEM_ONLY
         }
 
-        private static RecordingType recordingType;
-
-        public static void configureRecording(int recordingSize, String[] so, String name, RecordingType type) {
-            recording = new ArrayList<>(recordingSize);
-            subsystemOrder = so;
-            recordingName = name;
-            recordingType = type;
-
-            executorService = Executors.newSingleThreadScheduledExecutor();
-        }
+        private static RecordingType recordingType = null;
 
         public static void resetRecorder() {
-            recording = null;
-            subsystemOrder = null;
-            recordingName = null;
+            stopRecorder();
+            recording = new ArrayList<>();
         }
 
-        //TODO: SHOULD ERROR IF RECORDER ISN"T CONFIGURED
-        public static void startRecorder() {
+        public static void startRecorder() throws Exceptions.MotionOfTheOceanIsNotReady {
+            if(!isParentReady())
+                throw new Exceptions.MotionOfTheOceanIsNotReady("Could not start recorder");
             executorService.scheduleAtFixedRate(MotionOfTheOcean.Recorder::update, 0, 20, TimeUnit.MILLISECONDS);
-            System.out.println("RECORDING STARTED W/ EXEC: " + executorService.toString());
         }
 
         public static void stopRecorder() {
-            executorService.shutdownNow(); //might be dangerous
+            executorService.shutdown();
         }
 
         public static void exportRecording() {
-            FileManager.Encoder.export(recordingName, recording);
+            try {
+                FileManager.Encoder.export(selectedPath, recording); //it should export the headers to the file where executor will take those headers vs the one in the subsystem order
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public static void update() {
-            double[] pose;
-            if(recordingType == RecordingType.WITH_POSE) pose = getPose.get();
-            else pose = new double[]{0, 0, 0}; // TODO REPAIR THIS
+            double[] chassisMotion = getChassisState.get();
+            HashMap<String, Double> dynamicStates = new HashMap<String, Double>();
+            HashMap<String, Boolean> binaryStates = new HashMap<String, Boolean>();
 
-            otherStates = new Object[recorders.size()];
-
-            for(int i = 0; i < recorders.size(); i++) {
-                otherStates[i] = recorders.get(subsystemOrder[i]).get();
+            for(String name : subsystemOrder) {
+                char escapeChar = name.charAt(0);
+                if(escapeChar == '~')
+                    dynamicStates.put(
+                            name.substring(1),
+                            dynamicStateAccessors.get(name.substring(1)).get()
+                    );
+                else if(escapeChar == '-')
+                    binaryStates.put(
+                            name.substring(1),
+                            binaryStateAccessors.get(name.substring(1)).get()
+                    );
+                //System.out.println("ima bitch");
             }
 
-//            recording.add(new State(pose, otherStates));
-            System.out.println("updating recording");
+            recording.add(
+                    new State(
+                            chassisMotion,
+                            dynamicStates,
+                            binaryStates,
+                            parallelConditions,
+                            subsystemOrder));
+
         }
     }
 
