@@ -21,7 +21,7 @@ public class MotionOfTheOcean {
 //    private static final ArrayList<Accessor<Boolean>> binaryStateAccessors = new ArrayList<>();
 
     private static final HashMap<String, Consumer<Double>> dynamicExecutors = new HashMap<>();
-    private static final HashMap<String, Runnable> binaryExecutors = new HashMap<>();
+    private static final HashMap<String, Consumer<Boolean>> binaryExecutors = new HashMap<>();
 
 //    private static final ArrayList<Mutator<Double>> dynamicExecutors = new ArrayList<>();
 //    private static final ArrayList<Mutator<Boolean>> binaryExecutors = new ArrayList<>();
@@ -50,7 +50,7 @@ public class MotionOfTheOcean {
 
     }
 
-    public static void addBinaryState(String name, Supplier<Boolean> state, Runnable runnable) {
+    public static void addBinaryState(String name, Supplier<Boolean> state, Consumer<Boolean> runnable) {
         binaryStateAccessors.put(name, state);
         binaryExecutors.put(name, runnable);
     }
@@ -59,7 +59,7 @@ public class MotionOfTheOcean {
         parallelConditions.put(name, condition);
     }
 
-    public static void addSubsystemOrder(String subsystemName) {
+    public static void addSubsystem(String subsystemName) {
         subsystemOrder.add(subsystemName);
     }
 
@@ -76,7 +76,7 @@ public class MotionOfTheOcean {
         }
     }
 
-    public static boolean isParentReady() {
+    public static boolean isParentNotReady() {
         return (getChassisState == null || toChassisState == null);
     }
 
@@ -93,7 +93,7 @@ public class MotionOfTheOcean {
             SUBSYSTEM_ONLY
         }
 
-        private static RecordingType recordingType = null;
+        private static RecordingType recordingType = RecordingType.TOTAL_SYSTEM;
 
         public static void resetRecorder() {
             stopRecorder();
@@ -101,7 +101,7 @@ public class MotionOfTheOcean {
         }
 
         public static void startRecorder() throws Exceptions.MotionOfTheOceanIsNotReady {
-            if(!isParentReady())
+            if(isParentNotReady())
                 throw new Exceptions.MotionOfTheOceanIsNotReady("Could not start recorder");
             executorService.scheduleAtFixedRate(MotionOfTheOcean.Recorder::update, 0, 20, TimeUnit.MILLISECONDS);
         }
@@ -112,7 +112,10 @@ public class MotionOfTheOcean {
 
         public static void exportRecording() {
             try {
-                FileManager.Encoder.export(selectedPath, recording); //it should export the headers to the file where executor will take those headers vs the one in the subsystem order
+                String subsystemString = subsystemOrder.toString();
+                subsystemString = subsystemString.substring(1, subsystemString.length() - 1);
+                String headerString = "x, y, theta, v, a, " + subsystemString + ",";
+                FileManager.Encoder.export(selectedPath, recording, headerString);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -127,13 +130,13 @@ public class MotionOfTheOcean {
                 char escapeChar = name.charAt(0);
                 if(escapeChar == '~')
                     dynamicStates.put(
-                            name.substring(1),
-                            dynamicStateAccessors.get(name.substring(1)).get()
+                            name,
+                            dynamicStateAccessors.get(name).get()
                     );
                 else if(escapeChar == '-')
                     binaryStates.put(
-                            name.substring(1),
-                            binaryStateAccessors.get(name.substring(1)).get()
+                            name,
+                            binaryStateAccessors.get(name).get()
                     );
                 //System.out.println("ima bitch");
             }

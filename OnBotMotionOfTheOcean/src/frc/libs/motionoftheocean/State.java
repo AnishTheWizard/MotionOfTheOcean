@@ -55,6 +55,7 @@ public class State {
         StringBuilder line = new StringBuilder(motionVec + ", ");
 
         for(String s : subsystemOrder) {
+            System.out.println("s = " + s);
             if(s.charAt(0) == '~')
                 line.append(dynamicStates.get(s)).append(", ");
             else

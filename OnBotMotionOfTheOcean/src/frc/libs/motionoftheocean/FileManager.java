@@ -29,9 +29,10 @@ public class FileManager {
         private static final String DEFAULT_PATH_FILE = "recording.csv";
 
 
-        public static void export(String filename, ArrayList<State> recording) throws IOException {
+        public static void export(String filename, ArrayList<State> recording, String headers) throws IOException {
             new File(filename).createNewFile();
             FileWriter writer = new FileWriter(filename);
+            writer.write(headers + "\n");
             for(State state : recording) {
                 writer.write(state.toString());
             }
@@ -39,8 +40,8 @@ public class FileManager {
             writer.close();
         }
 
-        public static void export(ArrayList<State> recording) throws IOException {
-            export(DEFAULT_PATH_FILE, recording);
+        public static void export(ArrayList<State> recording, String headers) throws IOException {
+            export(DEFAULT_PATH_FILE, recording, headers);
         }
     }
 
