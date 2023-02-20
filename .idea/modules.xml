@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MotionOfTheOcean.iml" filepath="$PROJECT_DIR$/.idea/MotionOfTheOcean.iml" />
       <module fileurl="file://$PROJECT_DIR$/OnBotMotionOfTheOcean/OnBotMotionOfTheOcean.iml" filepath="$PROJECT_DIR$/OnBotMotionOfTheOcean/OnBotMotionOfTheOcean.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Python Extension/Python Extension.iml" filepath="$PROJECT_DIR$/Python Extension/Python Extension.iml" />
     </modules>
   </component>
 </project>

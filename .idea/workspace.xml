@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8940f2cd-12e0-46ee-9206-9430c383dd84" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/discord.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/FileManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/FileManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/MotionOfTheOcean.java" beforeDir="false" afterPath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/MotionOfTheOcean.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/State.java" beforeDir="false" afterPath="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/State.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/filename.csv" beforeDir="false" afterPath="$PROJECT_DIR$/filename.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/FileManager$Encoder.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/FileManager$Encoder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/FileManager$Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/FileManager$Parser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/MotionOfTheOcean$Executor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/MotionOfTheOcean$Executor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/MotionOfTheOcean$Recorder.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/MotionOfTheOcean$Recorder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/MotionOfTheOcean.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/MotionOfTheOcean.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/State.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OnBotMotionOfTheOcean/frc/libs/motionoftheocean/State.class" afterDir="false" />
-    </list>
+    <list default="true" id="8940f2cd-12e0-46ee-9206-9430c383dd84" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -86,10 +71,24 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/OnBotMotionOfTheOcean/src/frc/libs/motionoftheocean/paths" />
       <recent name="$PROJECT_DIR$/PathManager/path_manager/lib/pages" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Application.Main (1)">
+    <configuration name="Main (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="io.github.anishthewizard.Main" />
+      <module name="OnBotMotionOfTheOcean" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="io.github.anishthewizard.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="frc.libs.motionoftheocean.Main" />
       <module name="OnBotMotionOfTheOcean" />
@@ -133,9 +132,11 @@
       <item itemvalue="Application.Main" />
       <item itemvalue="Flutter.Path Manager" />
       <item itemvalue="Python.Python" />
+      <item itemvalue="Application.Main (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main (1)" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -180,6 +181,7 @@
       <workItem from="1672803199747" duration="610000" />
       <workItem from="1676873085727" duration="33000" />
       <workItem from="1676873132005" duration="3287000" />
+      <workItem from="1676920591568" duration="324000" />
     </task>
     <servers />
   </component>
