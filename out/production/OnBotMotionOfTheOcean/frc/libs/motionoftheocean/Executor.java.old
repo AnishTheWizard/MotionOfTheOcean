@@ -1,0 +1,56 @@
+package frc.libs.motionoftheocean;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+public class Executor {
+    String pathName;
+
+    ScheduledExecutorService service;
+
+    long delay;
+
+    HashMap<String, Consumer<Double>> dynamicExecutors;
+
+    HashMap<String, Runnable> staticExecutors;
+
+    ArrayList<State> executable;
+
+    boolean isRunning;
+
+    Consumer<double[]> toPose;
+
+    int index;
+
+    public Executor() {
+        service = Executors.newSingleThreadScheduledExecutor();
+    }
+
+    public void execute() {
+        State state = executable.get(index);
+
+        toPose.accept(state.getPose());
+
+        index++;
+
+    }
+
+    public void reset() {
+        stopExecutor();
+
+    }
+
+    public void startExecutor() {
+        isRunning = true;
+        service.scheduleAtFixedRate(this::execute, 0, delay, TimeUnit.MILLISECONDS);
+    }
+
+    public void stopExecutor() {
+        service.shutdown();
+        isRunning = false;
+    }
+}
