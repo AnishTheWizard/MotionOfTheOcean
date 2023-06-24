@@ -1,4 +1,4 @@
-package io.github.anishthewizard;
+package frc.libs.motionoftheocean;
 
 public class Exceptions {
 

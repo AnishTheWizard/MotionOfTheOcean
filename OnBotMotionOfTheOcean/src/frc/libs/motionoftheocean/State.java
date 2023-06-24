@@ -1,9 +1,8 @@
-package io.github.anishthewizard;
+package frc.libs.motionoftheocean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class State {
@@ -14,7 +13,6 @@ public class State {
     double theta;
 
     double v;
-    double a;
 
     HashMap<String, Double> dynamicStates;
     HashMap<String, Boolean> binaryStates;
@@ -32,7 +30,6 @@ public class State {
         theta = chassisMotion[2];
 
         v = chassisMotion[3];
-        a = chassisMotion[4];
 
         this.dynamicStates = dynamicStates;
         this.binaryStates = binaryStates;
@@ -43,26 +40,38 @@ public class State {
     }
 
     public double[] getPose() {
-        return new double[]{x, y, theta, v, a};
+        return new double[]{x, y, theta, v};
+    }
+
+    public HashMap<String, Double> getDynamicStates() {
+        return dynamicStates;
+    }
+
+    public HashMap<String, Boolean> getBinaryStates() {
+        return binaryStates;
     }
 
     @Override
     public String toString(){
         double[] pose = getPose();
-        String motionVec = Arrays.toString(pose);
-        motionVec = motionVec.substring(1, motionVec.length()-1);
+        String motionVec = "";
 
-        StringBuilder line = new StringBuilder(motionVec + ", ");
+        for(double dimension : pose) {
+            motionVec += dimension + ",";
+        }
+
+        StringBuilder line = new StringBuilder(motionVec);
 
         for(String s : subsystemOrder) {
             if(s.charAt(0) == '~')
-                line.append(dynamicStates.get(s)).append(", ");
+                line.append(dynamicStates.get(s)).append(",");
             else
-                line.append(binaryStates.get(s)).append(", ");
+                line.append(binaryStates.get(s)).append(",");
         }
 
+        System.out.println("line = " + line);
         for(String k : parallelConditions.keySet()) {
-            line.append(k).append(", ");
+            line.append(k).append(",");
         }
 
         return line.toString() + "\n";

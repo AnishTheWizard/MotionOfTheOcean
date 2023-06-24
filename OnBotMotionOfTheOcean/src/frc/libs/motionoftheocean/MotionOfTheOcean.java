@@ -1,6 +1,7 @@
-package io.github.anishthewizard;
+package frc.libs.motionoftheocean;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,17 +16,11 @@ public class MotionOfTheOcean {
     //Subsystem commands
     private static final HashMap<String, Supplier<Double>> dynamicStateAccessors = new HashMap<>();
     private static final HashMap<String, Supplier<Boolean>> binaryStateAccessors = new HashMap<>();
-//    private static final ArrayList<Accessor<Double>> dynamicStateAccessors = new ArrayList<>();
-//    private static final ArrayList<Accessor<Boolean>> binaryStateAccessors = new ArrayList<>();
 
     private static final HashMap<String, Consumer<Double>> dynamicExecutors = new HashMap<>();
     private static final HashMap<String, Consumer<Boolean>> binaryExecutors = new HashMap<>();
 
-//    private static final ArrayList<Mutator<Double>> dynamicExecutors = new ArrayList<>();
-//    private static final ArrayList<Mutator<Boolean>> binaryExecutors = new ArrayList<>();
-
     private static final HashMap<String, Supplier<Boolean>> parallelConditions = new HashMap<>();
-//    private static final ArrayList<Accessor<Boolean>> parallelConditions = new ArrayList<>();
 
     private static ArrayList<String> subsystemOrder = new ArrayList<String>();
 
@@ -34,7 +29,6 @@ public class MotionOfTheOcean {
     private static Consumer<double[]> toChassisState = null;
 
     //config params
-    private static final String[] PATH_FILES = FileManager.locateAllPaths();
     private static String selectedPath = "recording.csv";
 
     public static void addPositionFunctions(Supplier<double[]> getPose, Consumer<double[]> toPose) {
@@ -65,26 +59,16 @@ public class MotionOfTheOcean {
         selectedPath = filename;
     }
 
-    public static void selectRecording(String filename) throws Exceptions.PathFileDoesNotExist {
-        if(SharkUtility.findIn(PATH_FILES, filename)) {
-            selectedPath = filename;
-        }
-        else {
-            throw new Exceptions.PathFileDoesNotExist("File " + filename + " does not exist in memory");
-        }
-    }
-
     public static boolean isParentNotReady() {
         return (getChassisState == null || toChassisState == null);
     }
-
 
     public static class Recorder {
 
 
         private static ArrayList<State> recording = new ArrayList<>();
 
-        private static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        private static final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
 
         public enum RecordingType {
             TOTAL_SYSTEM,
@@ -110,10 +94,12 @@ public class MotionOfTheOcean {
 
         public static void exportRecording() {
             try {
-                String subsystemString = subsystemOrder.toString();
-                subsystemString = subsystemString.substring(1, subsystemString.length() - 1);
-                String headerString = "x, y, theta, v, a, " + subsystemString + ",";
-                FileManager.Encoder.export(selectedPath, recording, headerString);
+                String headerString = "x,y,theta,v,";
+                for(String subsystem : subsystemOrder) {
+                    headerString += subsystem + ",";
+                }
+
+                FileManager.export(selectedPath, recording, headerString);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -150,14 +136,63 @@ public class MotionOfTheOcean {
         }
     }
 
-    public static class Executor{
+    public static class Executor {
 
-        //execution configuration parameters
-        private static boolean readyToExecute = false;
+        private static ArrayList<State> executable = null;
 
-        public static void confirm() throws Exceptions.MotionOfTheOceanIsNotReady{
-            //run conditions to verify if all commands are loaded
-            readyToExecute = true;
+        private static ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+
+        private static boolean isExecuting;
+
+        private static int index;
+
+        public static void loadFile() throws Exceptions.PathFileDoesNotExist {
+            try {
+                executable = FileManager.loadFile(selectedPath);
+            } catch (FileNotFoundException e) {
+                throw new Exceptions.PathFileDoesNotExist("Path file does not exist: " + selectedPath);
+            }
+        }
+
+        public static void startExecutor() throws Exceptions.MotionOfTheOceanIsNotReady {
+            if(isParentNotReady() || executable == null)
+                throw new Exceptions.MotionOfTheOceanIsNotReady("Parent or executable may not be ready or configured");
+            service.scheduleAtFixedRate(MotionOfTheOcean.Executor::execute, 0, 20, TimeUnit.MILLISECONDS);
+            isExecuting = true;
+        }
+
+        public static void stopExecutor() {
+            service.shutdown();
+            isExecuting = false;
+        }
+
+        public static void resetExecutor() {
+            stopExecutor();
+            executable = null;
+        }
+
+        public static void execute() {
+            if(index >= executable.size()) {
+                stopExecutor();
+            }
+            else {
+                State state = executable.get(index);
+                toChassisState.accept(state.getPose());
+                HashMap<String, Double> dynamicStates = state.getDynamicStates();
+                HashMap<String, Boolean> binaryStates = state.getBinaryStates();
+                for (String subsystem : subsystemOrder) {
+                    if (subsystem.charAt(0) == '~') {
+                        dynamicExecutors.get(subsystem).accept(dynamicStates.get(subsystem));
+
+                    }
+                    else if (subsystem.charAt(0) == '-') {
+                        binaryExecutors.get(subsystem).accept(binaryStates.get(subsystem));
+                    }
+                }
+                index++;
+
+            }
+
         }
     }
 }

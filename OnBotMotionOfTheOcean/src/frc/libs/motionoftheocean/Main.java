@@ -1,4 +1,4 @@
-package io.github.anishthewizard;
+package frc.libs.motionoftheocean;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -15,16 +15,28 @@ public class Main {
         MotionOfTheOcean.addSubsystem("~roller");
         MotionOfTheOcean.addBinaryState("-intake", Main::getIntake, Main::setIntake);
         MotionOfTheOcean.addDynamicState("~roller", Main::getRoller, Main::setRoller);
+//        try {
+//            MotionOfTheOcean.Recorder.startRecorder();
+//        } catch (Exceptions.MotionOfTheOceanIsNotReady e) {
+//            e.printStackTrace();
+//        }
+//
+//        Thread.sleep(100);
+//
+//        MotionOfTheOcean.Recorder.stopRecorder();
+//        MotionOfTheOcean.Recorder.exportRecording();
+
         try {
-            MotionOfTheOcean.Recorder.startRecorder();
-        } catch (Exceptions.MotionOfTheOceanIsNotReady e) {
-            e.printStackTrace();
+            MotionOfTheOcean.Executor.loadFile();
+        } catch (Exceptions.PathFileDoesNotExist e) {
+            throw new RuntimeException(e);
         }
 
-        Thread.sleep(100);
-
-        MotionOfTheOcean.Recorder.stopRecorder();
-        MotionOfTheOcean.Recorder.exportRecording();
+        try {
+            MotionOfTheOcean.Executor.startExecutor();
+        } catch (Exceptions.MotionOfTheOceanIsNotReady e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void print() {
