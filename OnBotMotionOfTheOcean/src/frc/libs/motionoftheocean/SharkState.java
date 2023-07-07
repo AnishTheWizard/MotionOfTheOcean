@@ -1,61 +1,89 @@
 package frc.libs.motionoftheocean;
 
 public class SharkState {
+
     private double time;
 
     private double x;
+
     private double y;
+
     private double heading;
 
     private double linearVelocity;
+
     private double angularVelocity;
 
-    public SharkState(double t, double x, double y, double lV, double heading, double aV) {
-        time = t;
+    private double directionalMotion;
 
+    private String event;
+
+    public SharkState(double time, double x, double y, double heading, double linearVelocity, double angularVelocity, double directionalMotion, String event) {
+        this.time = time;
         this.x = x;
         this.y = y;
-
-        linearVelocity = lV;
-        angularVelocity = aV;
-
         this.heading = heading;
+        this.linearVelocity = linearVelocity;
+        this.angularVelocity = angularVelocity;
+        this.directionalMotion = directionalMotion;
+        this.event = event;
     }
 
     public double getTime() {
         return time;
     }
 
-    public void setTime(double time) {
-        this.time = time;
-    }
-
     public double getX() {
         return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
     }
 
     public double getY() {
         return y;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public double getHeading() {
+        return heading;
     }
 
     public double getLinearVelocity() {
         return linearVelocity;
     }
 
-    public void setLinearVelocity(double linearVelocity) {
-        this.linearVelocity = linearVelocity;
-    }
-
     public double getAngularVelocity() {
         return angularVelocity;
+    }
+
+    public double getDirectionalMotion() {
+        return directionalMotion;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public boolean hasEvent() {
+        return event.length() > 0;
+    }
+
+
+    public void setTime(double time) {
+        this.time = time;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setHeading(double heading) {
+        this.heading = heading;
+    }
+
+    public void setLinearVelocity(double linearVelocity) {
+        this.linearVelocity = linearVelocity;
     }
 
     public void setAngularVelocity(double angularVelocity) {
@@ -63,10 +91,9 @@ public class SharkState {
     }
 
     public double[] getAsArray() {
-        return new double[]{x, y, heading, linearVelocity, angularVelocity};
+        return new double[] {x, y, heading, linearVelocity, angularVelocity, directionalMotion};
     }
 
-    @Override
     public String toString() {
         return "SharkState{" +
                 "time=" + time +
@@ -75,14 +102,8 @@ public class SharkState {
                 ", heading=" + heading +
                 ", linearVelocity=" + linearVelocity +
                 ", angularVelocity=" + angularVelocity +
-                '}';
+                "}";
     }
 
-    public double getHeading() {
-        return heading;
-    }
 
-    public void setHeading(double heading) {
-        this.heading = heading;
-    }
 }
