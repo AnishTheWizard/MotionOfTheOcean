@@ -1,4 +1,4 @@
-package frc.libs.motionoftheocean;
+package io.github.anishthewizard.sharker;
 
 
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class MotionOfTheOcean {
+public class SharkER {
 
     //Subsystem commands
     private static final HashMap<String, Supplier<Double>> dynamicStateAccessors = new HashMap<>();
@@ -32,8 +32,8 @@ public class MotionOfTheOcean {
     private static String selectedPath = "recording.csv";
 
     public static void addPositionFunctions(Supplier<double[]> getPose, Consumer<double[]> toPose) {
-        MotionOfTheOcean.getChassisState = getPose;
-        MotionOfTheOcean.toChassisState = toPose;
+        SharkER.getChassisState = getPose;
+        SharkER.toChassisState = toPose;
     }
 
     public static void addDynamicState(String name, Supplier<Double> state, Consumer<Double> executor) {
@@ -85,7 +85,7 @@ public class MotionOfTheOcean {
         public static void startRecorder() throws Exceptions.MotionOfTheOceanIsNotReady {
             if(isParentNotReady())
                 throw new Exceptions.MotionOfTheOceanIsNotReady("Could not start recorder");
-            executorService.scheduleAtFixedRate(MotionOfTheOcean.Recorder::update, 0, 20, TimeUnit.MILLISECONDS);
+            executorService.scheduleAtFixedRate(SharkER.Recorder::update, 0, 20, TimeUnit.MILLISECONDS);
         }
 
         public static void stopRecorder() {
@@ -157,7 +157,7 @@ public class MotionOfTheOcean {
         public static void startExecutor() throws Exceptions.MotionOfTheOceanIsNotReady {
             if(isParentNotReady() || executable == null)
                 throw new Exceptions.MotionOfTheOceanIsNotReady("Parent or executable may not be ready or configured");
-            service.scheduleAtFixedRate(MotionOfTheOcean.Executor::execute, 0, 20, TimeUnit.MILLISECONDS);
+            service.scheduleAtFixedRate(SharkER.Executor::execute, 0, 20, TimeUnit.MILLISECONDS);
             isExecuting = true;
         }
 

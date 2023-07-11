@@ -1,4 +1,4 @@
-package frc.libs.motionoftheocean;
+package io.github.anishthewizard.sharker;
 
 import java.io.File;
 import java.io.FileNotFoundException;

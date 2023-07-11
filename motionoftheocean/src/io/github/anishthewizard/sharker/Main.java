@@ -1,4 +1,4 @@
-package frc.libs.motionoftheocean;
+package io.github.anishthewizard.sharker;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -10,11 +10,11 @@ public class Main {
     static Random r = new Random();
 
     public static void main(String[] args) throws InterruptedException {
-        MotionOfTheOcean.addPositionFunctions(Main::getPose, Main::toPose);
-        MotionOfTheOcean.addSubsystem("-intake");
-        MotionOfTheOcean.addSubsystem("~roller");
-        MotionOfTheOcean.addBinaryState("-intake", Main::getIntake, Main::setIntake);
-        MotionOfTheOcean.addDynamicState("~roller", Main::getRoller, Main::setRoller);
+        SharkER.addPositionFunctions(Main::getPose, Main::toPose);
+        SharkER.addSubsystem("-intake");
+        SharkER.addSubsystem("~roller");
+        SharkER.addBinaryState("-intake", Main::getIntake, Main::setIntake);
+        SharkER.addDynamicState("~roller", Main::getRoller, Main::setRoller);
 //        try {
 //            MotionOfTheOcean.Recorder.startRecorder();
 //        } catch (Exceptions.MotionOfTheOceanIsNotReady e) {
@@ -27,13 +27,13 @@ public class Main {
 //        MotionOfTheOcean.Recorder.exportRecording();
 
         try {
-            MotionOfTheOcean.Executor.loadFile();
+            SharkER.Executor.loadFile();
         } catch (Exceptions.PathFileDoesNotExist e) {
             throw new RuntimeException(e);
         }
 
         try {
-            MotionOfTheOcean.Executor.startExecutor();
+            SharkER.Executor.startExecutor();
         } catch (Exceptions.MotionOfTheOceanIsNotReady e) {
             throw new RuntimeException(e);
         }
