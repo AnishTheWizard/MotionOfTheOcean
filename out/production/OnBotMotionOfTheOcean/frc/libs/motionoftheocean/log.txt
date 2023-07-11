@@ -1,2 +1,0 @@
-take a look at the how states are handled in the recorder
--array lists with that magnitude might get messy
